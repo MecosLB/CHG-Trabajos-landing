@@ -1,0 +1,386 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Breakpoints
+$sm: 640px;
+$md: 768px;
+$lg: 1024px;
+$xl: 1280px;
+$xxl: 1536px;
+
+// Colors
+$white: #fff;
+$black: #000;
+$teal-400: rgb(45 212 191);
+$blue-950: rgb(23 37 84);
+
+// Utilities
+.logo {
+    max-width: 215px;
+}
+
+.social-links {
+    &>a {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.border-gray-light {
+    border: 1px solid rgba($black, 0.1);
+}
+
+.text-ellipsis {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+// Header
+.header {
+    .splide__slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        picture {
+            display: flex;
+            max-width: 215px;
+        }
+    }
+}
+
+// Searchbar
+.search-bar {
+    border-radius: 8px;
+
+    .input {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: $white;
+        @extend .border-gray-light;
+        border-bottom: 3px solid rgba($black, 0.1);
+        transition: all 0.2s ease-in-out;
+        border-radius: 8px;
+
+        @media (min-width: $md) {
+            width: 80%;
+            max-width: 80%;
+            border-bottom: 3px solid rgba($teal-400, 0);
+            border-radius: 8px 0 0 8px;
+        }
+
+        &>.logo {
+            font-size: 18px;
+        }
+
+        &>input {
+            width: 100%;
+
+
+            &:hover,
+            &:focus {
+                outline: none !important;
+            }
+        }
+
+        &.active {
+            border-bottom: 3px solid $teal-400;
+        }
+    }
+
+    .btn {
+        width: 100%;
+        @extend .btn-icon;
+        justify-content: center;
+        font-weight: 500;
+        text-transform: uppercase;
+
+        @media (min-width: $md) {
+            width: 20%;
+            max-width: 20%;
+            border-radius: 0 8px 8px 0;
+        }
+    }
+}
+
+// Filters
+.filters {
+    & .btn {
+        @extend .btn-icon;
+        font-weight: 500;
+        width: 100%;
+
+        @media (min-width: $md) {
+            width: 20%;
+        }
+    }
+
+    &>.wrapper {
+        width: 100%;
+
+        @media (min-width: $md) {
+            width: 80%;
+        }
+    }
+
+    & .select {
+        position: relative;
+        display: flex;
+        justify-content: center;
+
+        &>button {
+            @extend .btn-icon;
+            @extend .border-gray-light;
+            max-width: 180px;
+            color: rgba($black, 0.6);
+            font-weight: 500;
+            font-size: 14px;
+            background-color: $white;
+            transition: all 0.2s ease-in-out;
+
+            &:hover,
+            &:focus {
+                background-color: rgba($black, 0.1);
+            }
+
+            &>span {
+                max-width: 85%;
+                @extend .text-ellipsis;
+            }
+
+            &>.logo {
+                max-width: 10%;
+                color: $teal-400;
+            }
+        }
+
+        &>ul.options {
+            position: absolute;
+            top: 120%;
+            display: none;
+            width: fit-content;
+            min-width: 150px;
+            max-height: 100px;
+            font-size: 14px;
+            background-color: $white;
+            @extend.border-gray-light;
+            border-radius: 8px;
+            overflow-y: auto;
+            z-index: 10;
+
+            &>li {
+                max-width: 150px;
+                padding: 0.25rem 0.5rem;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+
+                &:hover,
+                &:focus {
+                    background-color: rgba($black, 0.1);
+                }
+
+            }
+
+            &.show {
+                display: block;
+                animation-name: fadeIn;
+                animation-duration: 0.5s;
+            }
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background-color: $teal-400;
+                border-radius: 100px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background-color: rgba($black, 0.1);
+            }
+        }
+    }
+}
+
+// Jobs
+.jobs {
+    position: sticky;
+
+    &>.list {
+        width: 300px;
+        max-width: 100%;
+        
+        @media (min-width:$md) {
+            width: 40%;
+            max-width: 40%;
+        }
+
+        .job {
+            min-height: 280px;
+            max-height: 280px;
+            padding: 1rem;
+            background-color: $white;
+            border-radius: 8px;
+            overflow: hidden;
+            @extend .border-gray-light;
+            transition: all 0.2s ease-in-out;
+
+            .header {
+                &>.logo {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 80px;
+                    max-width: 80px;
+                    height: 70px;
+                    padding: 0.5rem;
+                    background-color: rgba($black, 0.05);
+                    border-radius: 100%;
+
+                    @media (min-width: $lg) {
+                        height: 80px;
+                    }
+                }
+
+                &>.wrapper {
+                    width: 80%;
+                    max-width: 80%;
+                }
+            }
+
+            &:hover {
+                cursor: pointer;
+                border: 1px solid $blue-950;
+
+                .header .title {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+    &>.details {
+        position: sticky;
+        top: 1vh;
+        height: 98vh;
+        max-height: 98vh;
+        width: 60%;
+        max-width: 60%;
+        background-color: $white;
+        @extend .border-gray-light;
+        border-radius: 8px;
+
+        .header {
+            max-height: 200px;
+            height: 200px;
+            padding: 1rem;
+
+            .wrapper {
+                height: 100%;
+            }
+
+            .btn {
+                border-radius: 8px;
+                padding: 0.5rem;
+            }
+
+            &>.logo {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100px;
+                max-width: 120px;
+                height: 100px;
+                padding: 0.5rem;
+                background-color: rgba($black, 0.05);
+                border-radius: 100%;
+
+                @media (min-width: $lg) {
+                    width: 120px;
+                    height: 120px;
+                }
+            }
+        }
+
+        .body {
+            height: calc(100% - 200px);
+            max-height: calc(100% - 200px);
+            overflow-y: auto;
+            padding: 1rem 1rem 0;
+
+            ul,
+            ol {
+                list-style: disc;
+                padding: 1rem;
+            }
+
+            p {
+                margin-bottom: 1rem;
+            }
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background-color: $teal-400;
+                border-radius: 100px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background-color: rgba($black, 0.1);
+            }
+        }
+    }
+}
+
+// Footer
+.footer {
+    ul.info {
+        li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    }
+}
+
+// Animations
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
