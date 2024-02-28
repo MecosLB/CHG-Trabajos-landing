@@ -2,7 +2,7 @@ import React from 'react';
 import logoPng from '../assets/img/logo-color.png';
 import logoWebp from '../assets/img/logo-color.webp';
 
-const Navbar = () => {
+const Navbar = ({ openController }) => {
     return (
         <div className='flex items-center justify-center md:justify-between py-4 px-12 bg-white'>
             <picture className='logo'>
@@ -15,7 +15,7 @@ const Navbar = () => {
                     ¿No encuentras tu vacante ideal?
                 </h5>
 
-                <button className='ease-in-out duration-100 bg-teal-400 hover:bg-teal-500 focus:bg-teal-500 text-white font-medium uppercase rounded-full px-6 py-2'>
+                <button onClick={openController} className='ease-in-out duration-100 bg-teal-400 hover:bg-teal-500 focus:bg-teal-500 text-white font-medium uppercase rounded-full px-6 py-2'>
                     Envíanos tu CV
                 </button>
             </article>

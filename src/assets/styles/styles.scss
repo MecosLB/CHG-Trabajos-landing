@@ -49,6 +49,45 @@ $blue-950: rgb(23 37 84);
     border-radius: 8px;
 }
 
+.input-icon {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: $white;
+    @extend .border-gray-light;
+    border-bottom: 3px solid rgba($black, 0.1);
+    transition: all 0.2s ease-in-out;
+    border-radius: 8px;
+
+    &>.icon {
+        font-size: 18px;
+        min-width: 30px;
+    }
+
+    &>input {
+        width: 100%;
+
+
+        &:hover,
+        &:focus {
+            outline: none !important;
+        }
+    }
+
+    &.active {
+        border-bottom: 3px solid $teal-400;
+    }
+}
+
+.modal {
+    @extend .border-gray-light;
+    border-radius: 8px;
+    background-color: $white;
+    padding: 1rem;
+}
+
 // Header
 .header {
     .splide__slide {
@@ -68,40 +107,13 @@ $blue-950: rgb(23 37 84);
     border-radius: 8px;
 
     .input {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        background-color: $white;
-        @extend .border-gray-light;
-        border-bottom: 3px solid rgba($black, 0.1);
-        transition: all 0.2s ease-in-out;
-        border-radius: 8px;
+        @extend .input-icon;
 
         @media (min-width: $md) {
             width: 80%;
             max-width: 80%;
             border-bottom: 3px solid rgba($teal-400, 0);
             border-radius: 8px 0 0 8px;
-        }
-
-        &>.logo {
-            font-size: 18px;
-        }
-
-        &>input {
-            width: 100%;
-
-
-            &:hover,
-            &:focus {
-                outline: none !important;
-            }
-        }
-
-        &.active {
-            border-bottom: 3px solid $teal-400;
         }
     }
 
@@ -228,7 +240,7 @@ $blue-950: rgb(23 37 84);
     &>.list {
         width: 300px;
         max-width: 100%;
-        
+
         @media (min-width:$md) {
             width: 40%;
             max-width: 40%;
@@ -350,6 +362,51 @@ $blue-950: rgb(23 37 84);
                 background-color: rgba($black, 0.1);
             }
         }
+    }
+}
+
+// Apply Modal
+.apply {
+    position: fixed;
+    z-index: -1;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    background-color: rgba($black, 0.3);
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+
+    &.show {
+        z-index: 100;
+        opacity: 1;
+    }
+
+    .modal {
+        max-height: 98vh;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: $blue-950;
+            border-radius: 100px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: rgba($black, 0.1);
+        }
+    }
+
+    .input-icon {
+        padding: 0.5rem;
+        font-size: 14px;
+    }
+
+    .btn-icon {
+        padding: 0.5rem 1rem;
+        border-radius: 200px;
     }
 }
 

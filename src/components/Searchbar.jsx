@@ -27,7 +27,7 @@ const Searchbar = () => {
     return (
         <section className='search-bar max-w-screen-md mx-auto px-8 lg:px-0 flex flex-col md:flex-row gap-4 md:gap-0 mb-12'>
             <div className="input shadow-lg">
-                <FaSearch className='logo text-teal-400' />
+                <FaSearch className='icon text-teal-400' />
                 <input onFocus={handleFocus} onBlur={handleBlur} type="text" name='word' placeholder='Puesto o palabra clave' />
             </div>
 

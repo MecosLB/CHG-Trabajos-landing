@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import parse from 'html-react-parser';
 
-const JobDetails = ({ uid, title, company, location, salary, workDay, description, publishDate }) => {
+const JobDetails = ({ uid, title, company, location, salary, workDay, description, publishDate, openController }) => {
     // Prop format fixes
     workDay = workDay.includes('horas') ? 'hora' : 'mes';
 
@@ -22,7 +22,7 @@ const JobDetails = ({ uid, title, company, location, salary, workDay, descriptio
                         </span>
                     </p>
 
-                    <button id='applyBtn' className='btn text-sm lg:text-base text-white ease-in-out duration-100 bg-teal-400 focus:bg-teal-500 hover:bg-teal-500 mb-auto'>
+                    <button onClick={openController} className='btn text-sm lg:text-base text-white ease-in-out duration-100 bg-teal-400 focus:bg-teal-500 hover:bg-teal-500 mb-auto'>
                         Postularse
                     </button>
 
@@ -54,6 +54,7 @@ JobDetails.propTypes = {
     workDay: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     publishDate: PropTypes.string.isRequired,
+    openController: PropTypes.func.isRequired,
 }
 
 JobDetails.defaultProps = {
