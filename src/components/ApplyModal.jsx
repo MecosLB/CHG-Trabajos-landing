@@ -1,5 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 import { FaAddressCard, FaAngleRight, FaBirthdayCake, FaBuilding, FaCity, FaEnvelope, FaGraduationCap, FaHashtag, FaMapMarkedAlt, FaPaperPlane, FaPhoneAlt, FaRegEnvelope, FaTimes, FaUpload, FaUser, FaWarehouse } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+
+// Vars
+const apiUrl = 'https://bolsa-testing.puntochg.com/api/';
+
+const translation = {
+    profTitle: 'Título profesional',
+    name: 'Nombre',
+    lastName: 'Apellidos',
+    birthDate: 'Fecha de nacimiento',
+    mail: 'Correo electrónico',
+    phone: 'Teléfono',
+    street: 'Calle',
+    numInt: 'Número interior',
+    numExt: 'Número exterior',
+    neighbor: 'Colonia',
+    postCode: 'Código postal',
+    city: 'Municipio',
+    state: 'Estado',
+    cvFile: 'CV en PDF',
+};
 
 // input on focus handle
 const handleFocus = ({ target }) => {
@@ -26,71 +49,119 @@ const handleBlur = ({ target }) => {
 // General validations
 const isValidPhone = ({ value }) => {
     const regEx = /^\d{10}$/;
-
     return regEx.test(value);
 }
 
 const isValidMail = ({ value }) => {
     const regEx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
     return regEx.test(value);
+}
+
+const isValidPCode = ({ value }) => {
+    const regEx = /^\d{5}$/;
+    return regEx.test(value);
+}
+
+// Empty input and remove empty class
+const emptyInputs = (candidate = {}) => {
+    for (const key in candidate) {
+        const fieldDOM = document.querySelector(`input[name=${key}]`);
+        fieldDOM.parentNode.classList.remove('empty');
+
+        candidate[key] = '';
+    }
+}
+
+const addEmptyClass = (fields = []) => {
+    for (const field of fields) {
+        const fieldDOM = document.querySelector(`input[name=${field}]`);
+
+        if (!fieldDOM.value)
+            fieldDOM.parentNode.classList.add('empty');
+    }
 }
 
 // Validate each field
 const validateFields = (fields = []) => {
+    const specialValidation = {
+        mail: isValidMail,
+        phone: isValidPhone,
+        postCode: isValidPCode,
+    }
+
+    addEmptyClass(fields);
+
     for (const field of fields) {
         const fieldDOM = document.querySelector(`input[name=${field}]`);
 
-        if (!fieldDOM.value) return field;
+        if (!fieldDOM.value)
+            return Swal.fire({
+                html: `<h3 class='text-xl'>
+                    Favor de llenar el campo:<br><b class='font-medium'>${translation[field]}</b>
+                </h3>`,
+                icon: 'warning',
+                confirmButtonText: 'Cerrar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                },
+                width: '300px',
+            });
 
-        switch (field) {
-            case 'mail':
-                if (!isValidMail(fieldDOM)) return field;
-                break;
-            case 'phone':
-                if (!isValidPhone(fieldDOM)) return field;
-                break;
-        }
+        if (!Object.keys(specialValidation).includes(field)) continue;
+
+        if (!specialValidation[field](fieldDOM))
+            return Swal.fire({
+                html: `<h3 class='text-xl'>
+                        Favor de ingresar un:<br><b class='font-medium'>${translation[field]}</b> válido
+                        </h3>`,
+                icon: 'error',
+                confirmButtonText: 'Cerrar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                },
+                width: '300px',
+            });
     }
 
     return false;
 }
 
-const ApplyModal = ({ visible, closeController }) => {
-    // Form state & methods
-    const [candidate, setCandidate] = useState({
-        profTitle: '',
-        name: '',
-        lastName: '',
-        birthDate: '',
-        mail: '',
-        phone: '',
-        street: '',
-        numInt: '',
-        numExt: '',
-        neighbor: '',
-        postCode: '',
-        city: '',
-        state: '',
-        cvFile: '',
-    });
-
-    // Update input values in candidate state
-    const handleChange = ({ target }) => {
-        const fieldUpdated = target.getAttribute('name');
-        const value = target.value;
-
-        setCandidate({
-            ...candidate,
-            [fieldUpdated]: value,
-        });
+const ApplyModal = ({ visible, closeController, candidate, handleChange, handleChangeFile }) => {
+    // Clear inputs on close
+    const closeModal = () => {
+        closeController();
+        emptyInputs(candidate);
     }
 
     // Send data with axios after validation
     const sendCandidate = () => {
         const emptyField = validateFields(Object.keys(candidate));
+        const cvFileName = candidate.cvFile.split('\\').pop();
+        const data = new FormData(),
+            candidateObj = {};
 
-        if (emptyField) alert(`There is an empty field called: ${emptyField}`);
+        if (emptyField) return;
+
+        candidateObj.nombre = candidate.name;
+        candidateObj.apellidos = candidate.lastName;
+        candidateObj.fechaNacimiento = candidate.birthDate;
+        candidateObj.correo = candidate.mail;
+        candidateObj.telefono = candidate.phone;
+        candidateObj.direccion = [candidate.street, `${candidate.numInt}-${candidate.numExt}`, candidate.neighbor, candidate.postCode, candidate.city, candidate.state].join(',');
+        candidateObj.tituloProfesional = candidate.profTitle;
+
+        data.append('datos', JSON.stringify(candidateObj));
+        data.append('archivoCv', cvFileName);
+
+        console.log(cvFileName);
+
+        axios.post(`${apiUrl}candidatos/crear/`, data)
+            .then(({ data }) => {
+                console.log(data);
+            })
+            .catch(console.warn)
     }
 
     return (
@@ -101,7 +172,7 @@ const ApplyModal = ({ visible, closeController }) => {
                         Enviar aplicación
                     </h5>
 
-                    <button onClick={closeController} className='text-xl ease-in-out duration-100 text-blue-900 focus:text-blue-950 hover:text-blue-950'>
+                    <button onClick={closeModal} className='text-xl ease-in-out duration-100 text-blue-900 focus:text-blue-950 hover:text-blue-950'>
                         <FaTimes />
                     </button>
                 </span>
@@ -196,7 +267,7 @@ const ApplyModal = ({ visible, closeController }) => {
 
                     <div className="input-icon">
                         <FaUpload className='icon text-blue-900' />
-                        <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.cvFile} type="file" name='cvFile' accept='.pdf' />
+                        <input onChange={handleChangeFile} onFocus={handleFocus} onBlur={handleBlur} value={candidate.cvFile} type="file" name='cvFile' accept='.pdf' />
                     </div>
                 </article>
 
@@ -230,7 +301,7 @@ const ApplyModal = ({ visible, closeController }) => {
                 </article>
 
                 <span className='flex gap-2 justify-end'>
-                    <button className='btn-icon ease-in-out duration-100 text-white bg-blue-900 hover:bg-blue-800 focus:bg-blue-800'>
+                    <button className='hidden ease-in-out duration-100 text-white bg-blue-900 hover:bg-blue-800 focus:bg-blue-800'>
                         Siguiente
                         <FaAngleRight />
                     </button>
@@ -246,3 +317,17 @@ const ApplyModal = ({ visible, closeController }) => {
 }
 
 export default ApplyModal;
+
+// visible, closeController, candidate, handleChange
+ApplyModal.propTypes = {
+    visible: PropTypes.bool.isRequired,
+    closeController: PropTypes.func,
+    candidate: PropTypes.object.isRequired,
+    handleChange: PropTypes.func,
+    handleChangeFile: PropTypes.func,
+}
+
+ApplyModal.defaultProps = {
+    visible: false,
+    candidate: {},
+}
