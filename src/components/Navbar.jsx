@@ -4,7 +4,7 @@ import logoWebp from '../assets/img/logo-color.webp';
 
 const Navbar = ({ openController }) => {
     return (
-        <div className='flex items-center justify-center md:justify-between py-4 px-12 bg-white'>
+        <div className='flex items-center justify-center md:justify-between py-4 px-12'>
             <picture className='logo'>
                 <source srcSet={logoPng} type='image/webp' />
                 <img src={logoWebp} alt='Punto CHG' />

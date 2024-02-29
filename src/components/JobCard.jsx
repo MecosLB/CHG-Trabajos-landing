@@ -1,17 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import parse from 'html-react-parser';
+import logoPng from '../assets/img/logo-color.png';
 
 
-const JobCard = ({ uid, title, company, location, salary, workDay, description, publishDate }) => {
+const JobCard = ({ uid, title, company, location, salary, workDay, description, publishDate, detailsOnClick }) => {
     // Prop format fixes
-    workDay = workDay.includes('horas') ? 'hora' : 'mes';
-    description = description.substring(0, 147);
+    const fullLocation = location.split(',');
+    const shortDescription = description.substring(0, 147);
+    workDay = workDay.includes('Horas') ? 'hora' : 'mes';
+    location = fullLocation[fullLocation.length - 2];
+
+    const updateState = () => {
+        detailsOnClick(uid, title, company, location, salary, workDay, description, publishDate);
+    }
 
     return (
-        <article className='job shadow-md flex flex-col gap-4'>
+        <article onClick={updateState} className='job shadow-md flex flex-col gap-4'>
             <div className='header flex items-center justify-between gap-4'>
                 <picture className='logo'>
-                    <img src={`/src/assets/img/${uid}`} alt='Logo de la empresa reclutadora' />
+                    {/* <img src={`/src/assets/img/${uid}`} alt='Logo de la empresa reclutadora' /> */}
+                    <img src={logoPng} alt='Logo de la empresa reclutadora' />
                 </picture>
 
                 <div className='wrapper'>
@@ -29,11 +38,11 @@ const JobCard = ({ uid, title, company, location, salary, workDay, description, 
                 </div>
             </div>
 
-            <p className='description text-sm sm:text-xs lg:text-base'>
+            <span className='description text-sm sm:text-xs lg:text-base'>
                 {
-                    `${description}...`
+                    parse(`${shortDescription}...`)
                 }
-            </p>
+            </span>
 
             <span className='publication text-blue-950 text-xs lg:text-sm font-medium ml-auto mt-auto'>
                 Publicado el {publishDate}
@@ -45,23 +54,13 @@ const JobCard = ({ uid, title, company, location, salary, workDay, description, 
 export default JobCard;
 
 JobCard.propTypes = {
-    uid: PropTypes.string,
+    uid: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     company: PropTypes.string.isRequired,
-    location: PropTypes.string,
+    location: PropTypes.string.isRequired,
     salary: PropTypes.string.isRequired,
     workDay: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     publishDate: PropTypes.string.isRequired,
-}
-
-JobCard.defaultProps = {
-    uid: 'logo-color.png',
-    title: 'Asistente administrativo - medio tiempo',
-    company: 'Punto CHG',
-    location: 'Guadalajara, Jalisco',
-    salary: '5,000',
-    workDay: 'Tiempo completo',
-    description: 'We are looking for a motivated Asistente administrativo/ Medio tiempo to join our diverse team at Administración De Cuentas Centro Operativo Bosques S C in Mexico City Mexico City Growing your career as a Full Time Asistente administrativo/ Medio tiempo is a terrific opportunity to develop relevant skills.',
-    publishDate: '27-02-2024',
+    handleClick: PropTypes.func,
 }

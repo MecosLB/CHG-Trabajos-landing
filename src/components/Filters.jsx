@@ -34,8 +34,8 @@ const workingDayOptions = [{
     text: 'Medio tiempo',
     value: 'Medio tiempo',
 }, {
-    text: 'Por horas',
-    value: 'Por horas',
+    text: 'Por Horas',
+    value: 'Por Horas',
 }, {
     text: 'Becas/prácticas',
     value: 'Becas/prácticas',

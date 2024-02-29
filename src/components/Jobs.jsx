@@ -10,7 +10,7 @@ const apiUrl = 'https://bolsa-testing.puntochg.com/api/';
 
 
 const Jobs = ({ openController }) => {
-    // Jobs state & methods
+    // Jobs list state & methods
     const [jobsList, setJobsList] = useState({
         jobs: [],
     });
@@ -21,7 +21,7 @@ const Jobs = ({ openController }) => {
 
     const getAllJobs = () => {
         const data = new FormData();
-        data.append('registrosPorPagina', 1);
+        data.append('registrosPorPagina', 5);
 
         axios.post(`${apiUrl}vacantes/consultar/`, data)
             .then(({ data }) => {
@@ -32,13 +32,51 @@ const Jobs = ({ openController }) => {
                 });
             })
             .catch(console.warn);
+
+        // const [firstJob] = jobsList.jobs;
+        
+        // setJobDetails({
+        //     id: firstJob.id,
+        //     titulo: firstJob.titulo,
+        //     empresa: firstJob.empresa,
+        //     direccion: firstJob.direccion,
+        //     salario: firstJob.salario,
+        //     jornada: firstJob.jornada,
+        //     descripcion: firstJob.descripcion,
+        //     fechaPublicacion: firstJob.fechaPublicacion,
+        // });
+    }
+
+    // Job detail state & methods
+    const [jobDetails, setJobDetails] = useState({
+        id: '',
+        titulo: '',
+        empresa: '',
+        direccion: '',
+        salario: '',
+        jornada: '',
+        descripcion: '',
+        fechaPublicacion: '',
+    });
+
+    const detailsOnClick = (uid, title, company, location, salary, workDay, description, publishDate) => {
+        setJobDetails({
+            id: uid,
+            titulo: title,
+            empresa: company,
+            direccion: location,
+            salario: salary,
+            jornada: workDay,
+            descripcion: description,
+            fechaPublicacion: publishDate,
+        });
     }
 
     return (
         <section className='jobs max-w-screen-lg mx-auto flex justify-center md:justify-between gap-4 px-8 xl:px-0 mb-12'>
-            <JobsList jobs={jobsList.jobs} />
+            <JobsList jobs={jobsList.jobs} detailsOnClick={detailsOnClick} />
 
-            <JobDetails openController={openController} />
+            <JobDetails openController={openController} job={jobDetails} />
         </section>
     );
 }
