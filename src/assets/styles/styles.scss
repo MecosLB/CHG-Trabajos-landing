@@ -165,7 +165,10 @@ $blue-950: rgb(23 37 84);
         &>button {
             @extend .btn-icon;
             @extend .border-gray-light;
-            max-width: 180px;
+            width: 140px;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
             color: rgba($black, 0.6);
             font-weight: 500;
             font-size: 14px;
@@ -203,6 +206,7 @@ $blue-950: rgb(23 37 84);
             z-index: 10;
 
             &>li {
+                cursor: pointer;
                 max-width: 150px;
                 padding: 0.25rem 0.5rem;
                 white-space: nowrap;
@@ -214,6 +218,9 @@ $blue-950: rgb(23 37 84);
                     background-color: rgba($black, 0.1);
                 }
 
+                &.selected {
+                    background-color: rgba($black, 0.1);
+                }
             }
 
             &.show {
@@ -284,6 +291,7 @@ $blue-950: rgb(23 37 84);
                 }
             }
 
+            &.selected,
             &:hover {
                 cursor: pointer;
                 border: 1px solid $blue-950;
