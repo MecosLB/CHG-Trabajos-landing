@@ -4,10 +4,10 @@ import parse from 'html-react-parser';
 import logoPng from '../assets/img/logo-color.png';
 
 
-const JobCard = ({ uid, title, company, location, salary, workDay, description, publishDate, detailsOnClick, index }) => {
+const JobCard = ({ uid, companyId, title, company, location, salary, workDay, description, publishDate, questions, detailsOnClick, index }) => {
     // Prop format fixes
     const fullLocation = location.split(',');
-    const shortDescription = description.substring(0, 147);
+    const shortDescription = window.innerWidth > 639 ? description.substring(0, 147) : description.substring(0, 97);
     const payType = workDay.includes('Horas') ? 'hora' : 'mes';
     location = fullLocation[fullLocation.length - 2];
 
@@ -17,7 +17,7 @@ const JobCard = ({ uid, title, company, location, salary, workDay, description, 
         if (oldJobSelected) oldJobSelected.classList.toggle('selected');
         currentTarget.classList.toggle('selected');
 
-        detailsOnClick(uid, title, company, location, salary, workDay, description, publishDate);
+        detailsOnClick(uid, companyId, title, company, location, salary, workDay, description, publishDate, questions);
     }
 
     return (
@@ -49,6 +49,10 @@ const JobCard = ({ uid, title, company, location, salary, workDay, description, 
                 }
             </span>
 
+            <button onClick={detailsOnClick} className='btn inline-block md:hidden py-1 rounded-lg text-sm lg:text-base text-white ease-in-out duration-100 bg-blue-950 focus:bg-blue-900 hover:bg-blue-900 mb-auto'>
+                Ver detalles
+            </button>
+
             <span className='publication text-blue-950 text-xs lg:text-sm font-medium ml-auto mt-auto'>
                 Publicado el {publishDate}
             </span>
@@ -60,6 +64,7 @@ export default JobCard;
 
 JobCard.propTypes = {
     uid: PropTypes.string.isRequired,
+    companyId: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     company: PropTypes.string.isRequired,
     location: PropTypes.string.isRequired,
@@ -67,6 +72,7 @@ JobCard.propTypes = {
     workDay: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     publishDate: PropTypes.string.isRequired,
+    questions: PropTypes.string.isRequired,
     handleClick: PropTypes.func,
     index: PropTypes.number,
 }

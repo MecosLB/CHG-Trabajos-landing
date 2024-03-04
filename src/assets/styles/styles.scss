@@ -48,6 +48,10 @@ $blue-950: rgb(23 37 84);
     gap: 0.5rem;
     padding: 1rem;
     border-radius: 8px;
+
+    &.hidden {
+        display: none;
+    }
 }
 
 .input-icon {
@@ -379,7 +383,8 @@ $blue-950: rgb(23 37 84);
 }
 
 // Apply Modal
-.apply {
+.apply,
+.job-detail {
     position: fixed;
     z-index: -1;
     width: 100%;
@@ -397,6 +402,10 @@ $blue-950: rgb(23 37 84);
     .modal {
         max-height: 98vh;
         overflow-y: auto;
+
+        @media (max-width: calc($md - 1px)) {
+            max-width: 98vw;
+        }
 
         &::-webkit-scrollbar {
             width: 6px;
@@ -420,6 +429,29 @@ $blue-950: rgb(23 37 84);
     .btn-icon {
         padding: 0.5rem 1rem;
         border-radius: 200px;
+    }
+}
+
+// Job Details Modal
+.job-detail {
+    &>.modal {
+        padding: 0 1rem 1rem;
+    }
+
+    .header {
+        padding: 1rem 0;
+
+        &>.logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            max-width: 120px;
+            height: 100px;
+            padding: 0.5rem;
+            background-color: rgba($black, 0.05);
+            border-radius: 100%;
+        }
     }
 }
 

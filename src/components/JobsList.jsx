@@ -6,9 +6,9 @@ const JobsList = ({ jobs, detailsOnClick }) => {
     return (
         <div className='list flex flex-col gap-2'>
             {
-                jobs.map(({ id, titulo, empresa, direccion, salario, jornada, descripcion, fechaPublicacion }, index) => {
+                jobs.map(({ id, idEmpresa, titulo, empresa, direccion, salario, jornada, descripcion, fechaPublicacion, preguntas }, index) => {
                     return (
-                        <JobCard key={id} uid={id} title={titulo} company={empresa} location={direccion} salary={salario} workDay={jornada} description={descripcion} publishDate={fechaPublicacion} detailsOnClick={detailsOnClick} index={index} />
+                        <JobCard key={id} uid={id} companyId={idEmpresa} title={titulo} company={empresa} location={direccion} salary={salario} workDay={jornada} description={descripcion} publishDate={fechaPublicacion} questions={preguntas} detailsOnClick={detailsOnClick} index={index} />
                     );
                 })
             }

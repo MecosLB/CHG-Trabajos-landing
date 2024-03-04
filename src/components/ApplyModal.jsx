@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { FaAddressCard, FaAngleRight, FaBirthdayCake, FaBuilding, FaCity, FaEnvelope, FaGraduationCap, FaHashtag, FaMapMarkedAlt, FaPaperPlane, FaPhoneAlt, FaRegEnvelope, FaTimes, FaUpload, FaUser, FaWarehouse } from 'react-icons/fa';
+import { FaAddressCard, FaAngleLeft, FaAngleRight, FaBirthdayCake, FaBuilding, FaCity, FaEnvelope, FaGraduationCap, FaHashtag, FaMapMarkedAlt, FaPaperPlane, FaPhoneAlt, FaQuestion, FaRegEnvelope, FaTimes, FaUpload, FaUser, FaWarehouse } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 // Vars
@@ -76,6 +76,8 @@ const addEmptyClass = (fields = []) => {
     for (const field of fields) {
         const fieldDOM = document.querySelector(`input[name=${field}]`);
 
+        if (field === 'numInt') continue;
+
         if (!fieldDOM.value)
             fieldDOM.parentNode.classList.add('empty');
     }
@@ -93,6 +95,8 @@ const validateFields = (fields = []) => {
 
     for (const field of fields) {
         const fieldDOM = document.querySelector(`input[name=${field}]`);
+
+        if (field === 'numInt') continue;
 
         if (!fieldDOM.value)
             return Swal.fire({
@@ -128,15 +132,66 @@ const validateFields = (fields = []) => {
     return false;
 }
 
-const ApplyModal = ({ visible, closeController, candidate, handleChange, handleChangeFile }) => {
+const validateAdditionalQuestions = () => {
+    const questionsDOM = [...document.querySelectorAll('.question')],
+        answersArray = [];
+
+    for (const question of questionsDOM) {
+        const label = question.firstChild,
+            answerWrapper = question.lastChild,
+            answerInput = answerWrapper.lastChild;
+
+        if (!answerInput.value) {
+            Swal.fire({
+                html: `<h3 class='text-xl font-medium'>
+                        Favor de contestar todas las preguntas
+                        </h3>`,
+                icon: 'error',
+                confirmButtonText: 'Cerrar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                },
+                width: '300px',
+            });
+
+            return false;
+        }
+
+        answersArray.push({ label: label.innerText, respuesta: answerInput.value });
+    }
+
+    return answersArray;
+}
+
+const ApplyModal = ({ modal, closeController, candidate, handleChange, handleChangeFile }) => {
+    const addQuestions = modal.questions ? JSON.parse(modal.questions) : [];
+
     // Clear inputs on close
     const closeModal = () => {
         closeController();
         emptyInputs(candidate);
     }
 
+    // Change page to additional questions after validation
+    const nextPageModal = ({ currentTarget }) => {
+        const addQuestionsDOM = document.querySelector('.additional-info'),
+            personalInfoDOM = document.querySelector('.personal-info'),
+            nextBtn = document.querySelector('button.next'),
+            sendBtn = document.querySelector('button.send');
+        const emptyField = validateFields(Object.keys(candidate));
+
+        if (emptyField) return;
+
+        addQuestionsDOM.classList.toggle('hidden');
+        personalInfoDOM.classList.toggle('hidden');
+        nextBtn.classList.toggle('hidden');
+        sendBtn.classList.toggle('hidden');
+    }
+
     // Send data with axios after validation
-    const sendCandidate = () => {
+    const sendCandidate = async () => {
+        const endpoint = modal.companyId ? 'vacantes-candidatos/' : 'candidatos/';
         const emptyField = validateFields(Object.keys(candidate));
         const cvFileName = candidate.cvFile.split('\\').pop();
         const data = new FormData(),
@@ -152,20 +207,44 @@ const ApplyModal = ({ visible, closeController, candidate, handleChange, handleC
         candidateObj.direccion = [candidate.street, `${candidate.numInt}-${candidate.numExt}`, candidate.neighbor, candidate.postCode, candidate.city, candidate.state].join(',');
         candidateObj.tituloProfesional = candidate.profTitle;
 
+        // Validate if there are additional questions
+        if (modal.companyId) {
+            let emptyAnswers = validateAdditionalQuestions();
+
+            data.append('idEmpresa', modal.companyId);
+            data.append('idVacante', modal.jobId);
+
+            if (emptyAnswers === false) return;
+
+            candidateObj.respuestas = JSON.stringify(emptyAnswers);
+        }
+
         data.append('datos', JSON.stringify(candidateObj));
         data.append('archivoCv', cvFileName);
 
-        console.log(cvFileName);
+        try {
+            const { data: res } = await axios.post(`${apiUrl}${endpoint}crear/`, data);
+            Swal.fire({
+                html: `<h3 class='text-xl font-medium'>
+                        ${res.mensaje}
+                        </h3>`,
+                icon: 'success',
+                confirmButtonText: 'Cerrar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                },
+                width: '300px',
+            });
 
-        axios.post(`${apiUrl}candidatos/crear/`, data)
-            .then(({ data }) => {
-                console.log(data);
-            })
-            .catch(console.warn)
+            closeModal();
+        } catch (error) {
+            console.warn(error);
+        }
     }
 
     return (
-        <section className={`apply flex items-center justify-center ${visible ? 'show' : ''}`}>
+        <section className={`apply flex items-center justify-center ${modal.visible ? 'show' : ''}`}>
             <div className='modal flex flex-col gap-4 w-full max-w-screen-md mx-auto'>
                 <span className='flex items-center justify-between'>
                     <h5 className='text-2xl text-blue-900 font-semibold'>
@@ -188,7 +267,7 @@ const ApplyModal = ({ visible, closeController, candidate, handleChange, handleC
                         <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.profTitle} type="text" name='profTitle' placeholder='Título profesional' />
                     </div>
 
-                    <span className='flex gap-2'>
+                    <span className='flex flex-col md:flex-row gap-2'>
                         <div className="input-icon">
                             <FaUser className='icon text-blue-900' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.name} type="text" name='name' placeholder='Nombre' />
@@ -200,7 +279,7 @@ const ApplyModal = ({ visible, closeController, candidate, handleChange, handleC
                         </div>
                     </span>
 
-                    <span className='flex gap-2'>
+                    <span className='flex flex-col md:flex-row gap-2'>
                         <div className="input-icon">
                             <FaBirthdayCake className='icon text-blue-900' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.birthDate} type="date" name='birthDate' placeholder='Fecha de nacimiento' />
@@ -227,7 +306,7 @@ const ApplyModal = ({ visible, closeController, candidate, handleChange, handleC
                         <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.street} type="text" name='street' placeholder='Calle' />
                     </div>
 
-                    <span className='flex gap-2'>
+                    <span className='flex flex-col md:flex-row gap-2'>
                         <div className="input-icon">
                             <FaHashtag className='icon text-blue-900' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.numInt} type="text" name='numInt' placeholder='Num. int.' />
@@ -243,7 +322,7 @@ const ApplyModal = ({ visible, closeController, candidate, handleChange, handleC
                         </div>
                     </span>
 
-                    <span className='flex gap-2'>
+                    <span className='flex flex-col md:flex-row gap-2'>
                         <div className="input-icon">
                             <FaRegEnvelope className='icon text-blue-900' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.postCode} type="text" name='postCode' placeholder='Código postal' />
@@ -271,42 +350,47 @@ const ApplyModal = ({ visible, closeController, candidate, handleChange, handleC
                     </div>
                 </article>
 
-                <article className='additional-info hidden flex flex-col gap-2'>
+                <article className='additional-info hidden flex flex-col items-center gap-2'>
                     {/* Additional info */}
                     <h6 className='text-blue-950 text-lg font-medium'>
                         Preguntas adicionales
                     </h6>
 
-                    <span className='flex-col gap-2'>
-                        <label className='font-medium'>
-                            ¿Cuántos años de experiencia tienes en contaduría?
-                        </label>
+                    {
+                        addQuestions.map(({ tipo, label, valores }, index) => {
+                            return (<span key={index} className='question flex flex-col gap-1 w-full max-w-96'>
+                                <label className='text-blue-950 font-medium'>
+                                    {label}
+                                </label>
 
-                        <div className="input-icon">
-                            <FaUser className='icon text-blue-900' />
-                            <input onFocus={handleFocus} onBlur={handleBlur} type="text" name='name' placeholder='Respuesta' />
-                        </div>
-                    </span>
-
-                    <span className='flex-col gap-2'>
-                        <label className='font-medium'>
-                            Describa su forma de ser en 5 palabres:
-                        </label>
-
-                        <div className="input-icon">
-                            <FaUser className='icon text-blue-900' />
-                            <input onFocus={handleFocus} onBlur={handleBlur} type="text" name='name' placeholder='Respuesta' />
-                        </div>
-                    </span>
+                                <div className='input-icon'>
+                                    <FaQuestion className='icon text-blue-900' />
+                                    {
+                                        tipo === 'text' ?
+                                            <input className='add-input' onFocus={handleFocus} onBlur={handleBlur} type='text' placeholder='Respuesta' /> :
+                                            <select className='w-full add-select' onFocus={handleFocus} onBlur={handleBlur} defaultValue=''>
+                                                <option value='' hidden>Seleccionar...</option>
+                                                {
+                                                    valores.map((val, index) => {
+                                                        return <option key={index} value={val}>{val}</option>
+                                                    })
+                                                }
+                                            </select>
+                                    }
+                                </div>
+                            </span>)
+                        })
+                    }
                 </article>
 
-                <span className='flex gap-2 justify-end'>
-                    <button className='hidden ease-in-out duration-100 text-white bg-blue-900 hover:bg-blue-800 focus:bg-blue-800'>
+                <span className='flex gap-2 justify-end buttons'>
+                    {/* <Button hasQuestions={modal.questions} /> */}
+                    <button onClick={nextPageModal} className={`btn-icon next ease-in-out duration-100 text-white bg-blue-900 hover:bg-blue-800 focus:bg-blue-800 ${modal.questions ? '' : 'hidden'}`}>
                         Siguiente
                         <FaAngleRight />
                     </button>
 
-                    <button onClick={sendCandidate} className='btn-icon ease-in-out duration-100 text-white bg-blue-950 hover:bg-blue-900 focus:bg-blue-900'>
+                    <button onClick={sendCandidate} className={`btn-icon send ease-in-out duration-100 text-white bg-blue-950 hover:bg-blue-900 focus:bg-blue-900 ${!modal.questions ? '' : 'hidden'}`}>
                         Enviar
                         <FaPaperPlane />
                     </button>
@@ -318,16 +402,18 @@ const ApplyModal = ({ visible, closeController, candidate, handleChange, handleC
 
 export default ApplyModal;
 
-// visible, closeController, candidate, handleChange
 ApplyModal.propTypes = {
-    visible: PropTypes.bool.isRequired,
+    modal: PropTypes.object.isRequired,
     closeController: PropTypes.func,
     candidate: PropTypes.object.isRequired,
     handleChange: PropTypes.func,
     handleChangeFile: PropTypes.func,
 }
 
-ApplyModal.defaultProps = {
-    visible: false,
-    candidate: {},
+ApplyModal.defaultModal = {
+    modal: {
+        visible: false,
+        jobId: '1234',
+        questions: [{ "tipo": "text", "label": "Pregunta 1", "valores": [] }],
+    }
 }

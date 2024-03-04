@@ -5,9 +5,11 @@ import JobsList from './JobsList';
 import JobDetails from './JobDetails';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import JobDetailsResponsive from './jobDetailsResponsive';
 
 // Vars
 const apiUrl = 'https://bolsa-testing.puntochg.com/api/';
+const bodyDOM = document.querySelector('body');
 
 // General functions
 const noResultJobs = () => {
@@ -113,9 +115,29 @@ const Jobs = ({ openController }) => {
         }
     }
 
+    // Job modal state & methods
+    const [jobModal, setJobModal] = useState({
+        visible: false,
+    });
+
+    // const openJobModal = () => {
+    //     setJobModal({
+    //         visible: true,
+    //     });
+    // }
+
+    const closeJobModal = () => {
+        setJobModal({
+            visible: false,
+        });
+
+        bodyDOM.classList.remove('h-screen', 'overflow-hidden');
+    }
+
     // Job detail state & methods
     const [jobDetails, setJobDetails] = useState({
         id: '',
+        idEmpresa: '',
         titulo: '',
         empresa: '',
         direccion: '',
@@ -123,11 +145,13 @@ const Jobs = ({ openController }) => {
         jornada: '',
         descripcion: '',
         fechaPublicacion: '',
+        preguntas: '',
     });
 
-    const detailsOnClick = (uid, title, company, location, salary, workDay, description, publishDate) => {
+    const detailsOnClick = (uid, companyId, title, company, location, salary, workDay, description, publishDate, questions) => {
         setJobDetails({
             id: uid,
+            idEmpresa: companyId,
             titulo: title,
             empresa: company,
             direccion: location,
@@ -135,7 +159,16 @@ const Jobs = ({ openController }) => {
             jornada: workDay,
             descripcion: description,
             fechaPublicacion: publishDate,
+            preguntas: questions,
         });
+
+        if (window.innerWidth < 768) {
+            setJobModal({
+                visible: true,
+            });
+
+            bodyDOM.classList.add('h-screen', 'overflow-hidden');
+        }
     }
 
     // Selects state & methods
@@ -183,12 +216,14 @@ const Jobs = ({ openController }) => {
                 setJobDetails({
                     id: firstJob.id,
                     titulo: firstJob.titulo,
+                    idEmpresa: firstJob.idEmpresa,
                     empresa: firstJob.empresa,
                     direccion: fullLocation[fullLocation.length - 2],
                     salario: firstJob.salario,
                     jornada: firstJob.jornada,
                     descripcion: firstJob.descripcion,
                     fechaPublicacion: firstJob.fechaPublicacion,
+                    preguntas: firstJob.preguntas,
                 });
             } catch (error) {
                 console.warn(error);
@@ -207,6 +242,7 @@ const Jobs = ({ openController }) => {
                 <JobsList jobs={jobsList.jobs} detailsOnClick={detailsOnClick} />
 
                 <JobDetails openController={openController} job={jobDetails} />
+                <JobDetailsResponsive openController={openController} closeController={closeJobModal} isVisible={jobModal.visible} job={jobDetails} />
             </section>
         </>
     );

@@ -19,16 +19,17 @@ const toggleEmptyClass = (field) => {
         field.parentNode.classList.remove('empty');
 }
 
-const deleteOldFile = (fileName = '') => {
+const deleteOldFile = async (fileName = '') => {
     const data = new FormData();
     data.append('archivo', fileName);
 
     // Delete old file in temp_dir
-    axios.post(`${apiUrl}shared/uploader/eliminar/`, data)
-        .then(({ data }) => {
-            console.log(data);
-        })
-        .catch(console.warn);
+    try {
+        const res = await axios.post(`${apiUrl}shared/uploader/eliminar/`, data);
+        // console.log(res.data);
+    } catch (error) {
+        console.warn(error);
+    }
 }
 
 const Landing = () => {
@@ -59,11 +60,13 @@ const Landing = () => {
             [fieldUpdated]: value,
         });
 
+        if (fieldUpdated === 'numInt') return;
+
         toggleEmptyClass(target);
     }
 
     // Exclusive handle on change for file input
-    const handleChangeFile = ({ target }) => {
+    const handleChangeFile = async ({ target }) => {
         const oldFileName = candidate.cvFile.split('\\').pop(), // Delete C:\\fakepath\\ part in the string
             newFileName = target.value;
         const data = new FormData();
@@ -82,20 +85,27 @@ const Landing = () => {
         data.append('archivo', target.files[0]);
         data.append('extensiones', JSON.stringify(['pdf']));
 
-        axios.post(`${apiUrl}shared/uploader/subir/`, data)
-            .then(({ data }) => {
-                console.log(data);
-            })
-            .catch(console.warn);
+        try {
+            const res = await axios.post(`${apiUrl}shared/uploader/subir/`, data);
+            // console.log(res.data);
+        } catch (error) {
+            console.warn(error);
+        }
     }
 
     // Modal state & methods
-    const [applyVisible, setApplyVisible] = useState({
+    const [modal, setModal] = useState({
         visible: false,
+        jobId: '',
+        companyId: '',
+        questions: '',
     });
 
-    const openApplyModal = e => {
-        setApplyVisible({
+    const openApplyModal = ({ id, idEmpresa, preguntas }) => {
+        setModal({
+            jobId: id,
+            companyId: idEmpresa,
+            questions: preguntas,
             visible: true,
         });
 
@@ -103,14 +113,24 @@ const Landing = () => {
     }
 
     const closeApplyModal = e => {
+        const addQuestionsDOM = document.querySelector('.additional-info'),
+            personalInfoDOM = document.querySelector('.personal-info');
         const oldFileName = candidate.cvFile.split('\\').pop();
 
-        setApplyVisible({
+        setModal({
+            jobId: '',
+            companyId: '',
+            questions: '',
             visible: false,
         });
 
         deleteOldFile(oldFileName);
         bodyDOM.classList.remove('h-screen', 'overflow-hidden');
+
+        if (!personalInfoDOM.classList.contains('hidden')) return;
+
+        addQuestionsDOM.classList.toggle('hidden');
+        personalInfoDOM.classList.toggle('hidden');
     }
 
     return (
@@ -121,7 +141,7 @@ const Landing = () => {
             {/* <Searchbar /> */}
             <Jobs openController={openApplyModal} />
 
-            <ApplyModal visible={applyVisible.visible} candidate={candidate} handleChange={handleChange} handleChangeFile={handleChangeFile} closeController={closeApplyModal} />
+            <ApplyModal modal={modal} candidate={candidate} handleChange={handleChange} handleChangeFile={handleChangeFile} closeController={closeApplyModal} />
 
             <Footer />
         </>
