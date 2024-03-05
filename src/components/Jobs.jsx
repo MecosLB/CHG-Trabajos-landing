@@ -54,6 +54,8 @@ const Jobs = ({ openController }) => {
     });
 
     const searchJobs = async () => {
+        const btnLoad = document.querySelector('#loadMore'),
+            loader = document.querySelector('.job-loader');
         const { company, department, salary, workDay, description } = selectValues;
         const data = new FormData();
         const filtersObj = {
@@ -79,13 +81,19 @@ const Jobs = ({ openController }) => {
             setJobsList({
                 ...jobsList,
                 jobs: searchedJobs,
+                pageNum: 1,
             });
+
+            btnLoad.classList.remove('hidden');
+            btnLoad.classList.add('flex');
         } catch (error) {
             console.warn(error);
         }
     }
 
     const filterJobs = async () => {
+        const btnLoad = document.querySelector('#loadMore'),
+            loader = document.querySelector('.job-loader');
         const { company, department, salary, workDay, description } = selectValues;
         const data = new FormData();
         const filtersObj = {
@@ -109,7 +117,76 @@ const Jobs = ({ openController }) => {
             setJobsList({
                 ...jobsList,
                 jobs: filteredJobs,
+                pageNum: 1,
             });
+
+            btnLoad.classList.remove('hidden');
+            btnLoad.classList.add('flex');
+        } catch (error) {
+            console.warn(error);
+        }
+    }
+
+    const nextPage = async () => {
+        const btnLoad = document.querySelector('#loadMore'),
+            loader = document.querySelector('.job-loader');
+        let { jobs, pageNum } = jobsList;
+        const { company, department, salary, workDay, description } = selectValues;
+        const data = new FormData();
+        const filtersObj = {
+            idEmpresa: company.id,
+            idDepartamento: department.id,
+            salario: salary.id,
+            jornada: workDay.id,
+            descripcion: description,
+        }
+
+        data.append('filtros', JSON.stringify(filtersObj));
+        data.append('registrosPorPagina', jobsList.jobsPerPage);
+        data.append('pagina', ++pageNum);
+
+        try {
+            btnLoad.classList.remove('flex');
+            btnLoad.classList.add('hidden');
+            loader.classList.toggle('hidden');
+
+            let { data: res } = await axios.post(`${apiUrl}vacantes/consultar/`, data);
+            const { vacantes } = res;
+
+            if (!vacantes) {
+                loader.classList.add('hidden');
+                btnLoad.classList.remove('flex');
+                btnLoad.classList.add('hidden');
+
+                return Swal.fire({
+                    html: `<h3 class='text-xl font-medium'>
+                            Lo sentimos.
+                        </h3>
+                        <p class='text-base'>
+                            No hay más vacantes disponibles por el momento.
+                        </p>`,
+                    icon: 'info',
+                    confirmButtonText: 'Cerrar',
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                    },
+                    width: '300px',
+                });
+            }
+
+            for (const job of vacantes)
+                jobs = [...jobs, job];
+
+            setJobsList({
+                ...jobsList,
+                jobs: jobs,
+                pageNum: pageNum,
+            });
+
+            btnLoad.classList.remove('hidden');
+            btnLoad.classList.add('flex');
+            loader.classList.toggle('hidden');
         } catch (error) {
             console.warn(error);
         }
@@ -119,12 +196,6 @@ const Jobs = ({ openController }) => {
     const [jobModal, setJobModal] = useState({
         visible: false,
     });
-
-    // const openJobModal = () => {
-    //     setJobModal({
-    //         visible: true,
-    //     });
-    // }
 
     const closeJobModal = () => {
         setJobModal({
@@ -239,11 +310,12 @@ const Jobs = ({ openController }) => {
             <Filters filterJobs={filterJobs} selectValues={selectValues} setSelectValues={setSelectValues} />
 
             <section className='jobs max-w-screen-lg mx-auto flex justify-center md:justify-between gap-4 px-8 xl:px-0 mb-12'>
-                <JobsList jobs={jobsList.jobs} detailsOnClick={detailsOnClick} />
+                <JobsList jobs={jobsList.jobs} detailsOnClick={detailsOnClick} paginationController={nextPage} />
 
                 <JobDetails openController={openController} job={jobDetails} />
-                <JobDetailsResponsive openController={openController} closeController={closeJobModal} isVisible={jobModal.visible} job={jobDetails} />
             </section>
+
+            <JobDetailsResponsive openController={openController} closeController={closeJobModal} isVisible={jobModal.visible} job={jobDetails} />
         </>
     );
 }

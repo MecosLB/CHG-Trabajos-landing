@@ -254,7 +254,7 @@ $blue-950: rgb(23 37 84);
     position: sticky;
 
     &>.list {
-        width: 300px;
+        // width: 300px;
         max-width: 100%;
 
         @media (min-width:$md) {
@@ -463,6 +463,22 @@ $blue-950: rgb(23 37 84);
             align-items: center;
             gap: 0.5rem;
         }
+    }
+}
+
+// Loader
+.job-loader {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: conic-gradient(#0000 10%, $blue-950);
+    -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+    animation: rotation 1s infinite linear;
+}
+
+@keyframes rotation {
+    to {
+        transform: rotate(1turn)
     }
 }
 
