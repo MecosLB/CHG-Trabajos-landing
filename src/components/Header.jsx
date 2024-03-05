@@ -5,6 +5,8 @@ import puntoLogo from '../assets/img/logos/punto-logo.png';
 import hospitalesLogo from '../assets/img/logos/hospitales-logo.png';
 import consultoresLogo from '../assets/img/logos/consultores-logo.png';
 import musicLogo from '../assets/img/logos/music-logo.png';
+import filmsLogo from '../assets/img/logos/films-logo.png';
+import recordingLogo from '../assets/img/logos/recording-logo.png';
 
 const splideOptions = {
     type: 'loop',
@@ -44,6 +46,18 @@ const Header = () => {
                     <SplideSlide>
                         <picture>
                             <img src={puntoLogo} alt='Logo Punto CHG' />
+                        </picture>
+                    </SplideSlide>
+
+                    <SplideSlide>
+                        <picture>
+                            <img src={filmsLogo} alt='Logo CHG Films' />
+                        </picture>
+                    </SplideSlide>
+
+                    <SplideSlide>
+                        <picture>
+                            <img src={recordingLogo} alt='Logo CHG Recording' />
                         </picture>
                     </SplideSlide>
 
