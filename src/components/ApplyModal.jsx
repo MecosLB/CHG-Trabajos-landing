@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { FaAddressCard, FaAngleLeft, FaAngleRight, FaBirthdayCake, FaBuilding, FaCity, FaEnvelope, FaGraduationCap, FaHashtag, FaMapMarkedAlt, FaPaperPlane, FaPhoneAlt, FaQuestion, FaRegEnvelope, FaTimes, FaUpload, FaUser, FaWarehouse } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { FaAddressCard, FaAngleRight, FaBirthdayCake, FaBuilding, FaCity, FaEnvelope, FaGraduationCap, FaHashtag, FaMapMarkedAlt, FaPaperPlane, FaPhoneAlt, FaQuestion, FaRegEnvelope, FaTimes, FaUpload, FaUser, FaWarehouse } from 'react-icons/fa';
 
 // Vars
 const apiUrl = 'https://bolsa-testing.puntochg.com/api/';
@@ -166,9 +167,39 @@ const validateAdditionalQuestions = () => {
 
 const ApplyModal = ({ modal, closeController, candidate, handleChange, handleChangeFile }) => {
     const addQuestions = modal.questions ? JSON.parse(modal.questions) : [];
+    const SITE_KEY = '6LcywIspAAAAAIsY19yPijW8wFwsQ3LpAvqGs14d';
+
+    // recaptcha ref
+    const captchaRef = useRef(null);
+
+    const validateCaptcha = async () => {
+        const token = captchaRef.current.getValue();
+        const data = new FormData();
+
+        data.append('token', token);
+        captchaRef.current.reset();
+
+        try {
+            let res = await axios.post(`${apiUrl}shared/recaptcha/site_key/`);
+            const { site_key } = res.data;
+
+            res = await axios.post(`${apiUrl}shared/recaptcha/`, data);
+            const { message, error } = res.data;
+
+            if (error) return false;
+
+            const { success } = JSON.parse(message);
+            return success;
+        } catch (error) {
+            console.warn(error);
+        }
+
+        return false;
+    }
 
     // Clear inputs on close
     const closeModal = () => {
+        captchaRef.current.reset();
         closeController();
         emptyInputs(candidate);
     }
@@ -193,11 +224,25 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
     const sendCandidate = async () => {
         const endpoint = modal.companyId ? 'vacantes-candidatos/' : 'candidatos/';
         const emptyField = validateFields(Object.keys(candidate));
+        const captchaFullfilled = await validateCaptcha();
         const cvFileName = candidate.cvFile.split('\\').pop();
         const data = new FormData(),
             candidateObj = {};
 
         if (emptyField) return;
+        if (!captchaFullfilled)
+            return Swal.fire({
+                html: `<h3 class='text-xl font-medium'>
+                Favor de validar que no eres un robot.
+                </h3>`,
+                icon: 'error',
+                confirmButtonText: 'Cerrar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                },
+                width: '300px',
+            });
 
         candidateObj.nombre = candidate.name;
         candidateObj.apellidos = candidate.lastName;
@@ -228,7 +273,7 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
                 html: `<h3 class='text-xl font-medium'>
                         ${res.mensaje}
                         </h3>`,
-                icon: 'success',
+                icon: `${res.error ? 'error' : 'success'}`,
                 confirmButtonText: 'Cerrar',
                 buttonsStyling: false,
                 customClass: {
@@ -237,7 +282,7 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
                 width: '300px',
             });
 
-            closeModal();
+            if (!res.error) closeModal();
         } catch (error) {
             console.warn(error);
         }
@@ -382,6 +427,8 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
                         })
                     }
                 </article>
+
+                <ReCAPTCHA className='w-min mx-auto' sitekey={SITE_KEY} ref={captchaRef} />
 
                 <span className='flex gap-2 justify-end buttons'>
                     {/* <Button hasQuestions={modal.questions} /> */}

@@ -39,7 +39,7 @@ const JobDetails = ({ openController, job }) => {
             </article>
 
             <div className="body text-sm lg:text-base">
-                {parse(job.descripcion)}
+                {parse(decodeURI(job.descripcion))}
             </div>
         </div>
     );

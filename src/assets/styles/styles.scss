@@ -295,6 +295,11 @@ $blue-950: rgb(23 37 84);
                 }
             }
 
+            .description {
+                max-height: 100px;
+                overflow: hidden;
+            }
+
             &.selected,
             &:hover {
                 cursor: pointer;
