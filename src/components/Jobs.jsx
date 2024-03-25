@@ -68,6 +68,7 @@ const Jobs = ({ openController }) => {
 
         if (!description) return emptySearch();
 
+        data.append('estatus', 'Activo');
         data.append('filtros', JSON.stringify(filtersObj));
         data.append('registrosPorPagina', jobsList.jobsPerPage);
         data.append('pagina', 1);
@@ -104,6 +105,7 @@ const Jobs = ({ openController }) => {
             descripcion: description,
         }
 
+        data.append('estatus', 'Activo');
         data.append('filtros', JSON.stringify(filtersObj));
         data.append('registrosPorPagina', jobsList.jobsPerPage);
         data.append('pagina', 1);
@@ -141,6 +143,7 @@ const Jobs = ({ openController }) => {
             descripcion: description,
         }
 
+        data.append('estatus', 'Activo');
         data.append('filtros', JSON.stringify(filtersObj));
         data.append('registrosPorPagina', jobsList.jobsPerPage);
         data.append('pagina', ++pageNum);
@@ -267,6 +270,7 @@ const Jobs = ({ openController }) => {
         const getAllJobs = async () => {
             const data = new FormData();
             data.append('registrosPorPagina', jobsList.jobsPerPage);
+            data.append('estatus', 'Activo');
 
             try {
                 // Get jobs list
