@@ -27,7 +27,7 @@ const Footer = () => {
 
                     <ul className='info flex flex-col items-center lg:items-start gap-2'>
                         <li>
-                            <FaPhoneAlt className='text-teal-400' />
+                            <FaPhoneAlt className='text-white' />
                             <span>
                                 <a href="tel:3338803131">(33) 3880 3131</a>
                                 &nbsp;y&nbsp;
@@ -36,14 +36,14 @@ const Footer = () => {
                         </li>
 
                         <li>
-                            <FaMapMarkerAlt className='text-teal-400' />
+                            <FaMapMarkerAlt className='text-white' />
                             <span>
                                 Guadalupe 1555, Int. 9, Chapalita Oriente CP 45040, Zapopan, Jal.
                             </span>
                         </li>
 
                         <li>
-                            <FaRegEnvelope className='text-teal-400' />
+                            <FaRegEnvelope className='text-white' />
                             contacto@puntochg.com
                         </li>
                     </ul>

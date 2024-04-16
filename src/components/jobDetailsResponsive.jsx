@@ -25,7 +25,7 @@ const JobDetailsResponsive = ({ closeController, openController, isVisible, job 
                         </p>
 
                         <button onClick={() => { openController(job) }} job={job.id} className='btn rounded-lg
-                        py-1 text-sm lg:text-base text-white ease-in-out duration-100 bg-teal-400 focus:bg-teal-500 hover:bg-teal-500 mb-auto'>
+                        py-1 text-sm lg:text-base text-white ease-in-out duration-100 bg-blue-950 focus:bg-blue-900 hover:bg-blue-900 mb-auto'>
                             Postularse
                         </button>
 

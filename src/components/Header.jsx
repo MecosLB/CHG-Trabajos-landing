@@ -34,7 +34,7 @@ const Header = () => {
     return (
         <section className='header flex flex-col gap-16 max-w-screen-lg mx-auto px-8 lg:px-0 py-16'>
             <h1 className='text-gray-800 text-center text-3xl md:text-5xl font-bold'>
-                Título de la bolsa de trabajo <br className='hidden md:block'/><span className='text-teal-400'>llamativo e incitante</span>.
+                Título de la bolsa de trabajo <br className='hidden md:block'/><span className='text-blue-900'>llamativo e incitante</span>.
             </h1>
 
             <div className='text-center'>

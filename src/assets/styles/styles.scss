@@ -13,7 +13,6 @@ $xxl: 1536px;
 $white: #fff;
 $black: #000;
 $red: #dc3545;
-$teal-400: rgb(45 212 191);
 $blue-950: rgb(23 37 84);
 
 // Utilities
@@ -82,7 +81,7 @@ $blue-950: rgb(23 37 84);
     }
 
     &.active {
-        border-color: $teal-400;
+        border-color: $blue-950;
     }
 
     &.empty {
@@ -119,10 +118,10 @@ $blue-950: rgb(23 37 84);
         @extend .input-icon;
 
         @media (min-width: $md) {
-            width: 80%;
-            max-width: 80%;
-            border-bottom: 3px solid rgba($teal-400, 0);
-            border-radius: 8px 0 0 8px;
+            width: 100%;
+            max-width: 100%;
+            border-bottom: 3px solid rgba($blue-950, 0);
+            border-radius: 8px;
         }
     }
 
@@ -161,6 +160,27 @@ $blue-950: rgb(23 37 84);
         }
     }
 
+    & .buttons {
+        min-width: 90px;
+
+        button {
+            width: 50%;
+        }
+
+        #filterBtn {
+            width: 100%;
+
+            &.filtered {
+                width: inherit;
+                border-radius: 8px 0 0 8px;
+            }
+        }
+
+        #emptyFilterBtn {
+            border-radius: 0 8px 8px 0;
+        }
+    }
+
     & .select {
         position: relative;
         display: flex;
@@ -191,7 +211,7 @@ $blue-950: rgb(23 37 84);
 
             &>.logo {
                 max-width: 10%;
-                color: $teal-400;
+                color: $blue-950;
             }
         }
 
@@ -238,7 +258,7 @@ $blue-950: rgb(23 37 84);
             }
 
             &::-webkit-scrollbar-thumb {
-                background-color: $teal-400;
+                background-color: $blue-950;
                 border-radius: 100px;
             }
 
@@ -376,7 +396,7 @@ $blue-950: rgb(23 37 84);
             }
 
             &::-webkit-scrollbar-thumb {
-                background-color: $teal-400;
+                background-color: $blue-950;
                 border-radius: 100px;
             }
 

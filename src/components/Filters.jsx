@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { FaFilter } from 'react-icons/fa';
+import { FaSearch, FaTimes } from 'react-icons/fa';
 import SelectFilter from './SelectFilter';
 import axios from 'axios';
 
@@ -32,7 +32,7 @@ const salaryOptions = [{
     nombre: 'Mayor a $15,000 M.N. /mes ',
 }];
 
-const Filters = ({ filterJobs, selectValues, setSelectValues }) => {
+const Filters = ({ filterJobs, emptyFilters, isFiltering, setIsFiltering, selectValues, setSelectValues }) => {
     // Filters options state & methods
     const [filtersOptions, setFiltersOptions] = useState({
         companies: [],
@@ -75,6 +75,8 @@ const Filters = ({ filterJobs, selectValues, setSelectValues }) => {
                 value: value,
             },
         });
+
+        setIsFiltering(true);
     }
 
     return (
@@ -89,10 +91,16 @@ const Filters = ({ filterJobs, selectValues, setSelectValues }) => {
                 <SelectFilter handleOptionClick={handleOptionClick} type='salary' selectValue={selectValues.salary} options={filtersOptions.salaries} />
             </div>
 
-            <button id='filterBtn' onClick={filterJobs} className='btn text-white text-sm lg:text-base ease-in-out duration-100 bg-teal-400 focus:bg-teal-500 hover:bg-teal-500'>
-                Filtrar
-                <FaFilter />
-            </button>
+            <div className='buttons flex justify-center flex-wrap'>
+                <button id='filterBtn' onClick={filterJobs} className={`btn text-white text-sm lg:text-base ease-in-out duration-100 bg-blue-950 focus:bg-blue-900 hover:bg-blue-900 ${isFiltering ? 'filtered' : ''}`}>
+                    {/* Filtrar */}
+                    <FaSearch />
+                </button>
+
+                <button id='emptyFilterBtn' onClick={emptyFilters} className={`btn text-white text-sm lg:text-base ease-in-out duration-100 bg-red-600 focus:bg-red-700 hover:bg-red-700 ${!isFiltering ? 'hidden' : ''}`}>
+                    <FaTimes />
+                </button>
+            </div>
         </section>
     );
 }
@@ -101,6 +109,9 @@ export default Filters;
 
 Filters.propTypes = {
     filterJobs: PropTypes.func,
+    emptyFilters: PropTypes.func,
+    isFiltering: PropTypes.bool,
+    setIsFiltering: PropTypes.func,
     selectValues: PropTypes.object.isRequired,
     setSelectValues: PropTypes.func,
 }

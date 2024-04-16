@@ -47,6 +47,7 @@ const SelectFilter = ({ type, selectValue, handleOptionClick, options }) => {
             </button>
 
             <ul id={`options${textSelects[type]}`} className='options shadow-lg'>
+                <li onClick={handleSelectOption} type={type} value=''>{textSelects[type]}</li>
                 {
                     options.map(({ id, nombre }) => {
                         return (

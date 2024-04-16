@@ -15,7 +15,7 @@ const Navbar = ({ openController }) => {
                     ¿No encuentras tu vacante ideal?
                 </h5>
 
-                <button onClick={openController} className='ease-in-out duration-100 bg-teal-400 hover:bg-teal-500 focus:bg-teal-500 text-white font-medium uppercase rounded-full px-6 py-2'>
+                <button onClick={openController} className='ease-in-out duration-100 bg-blue-950 hover:bg-blue-900 focus:bg-blue-900 text-white font-medium uppercase rounded-full px-6 py-2'>
                     Envíanos tu CV
                 </button>
             </article>

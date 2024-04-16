@@ -30,169 +30,138 @@ const noResultJobs = () => {
     });
 }
 
-const emptySearch = () => {
-    return Swal.fire({
-        html: `<h3 class='text-lg font-medium'>
-                    Favor de escribir una palabra clave para su búsqueda.
-                </h3>`,
-        icon: 'error',
-        confirmButtonText: 'Cerrar',
-        buttonsStyling: false,
-        customClass: {
-            confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
-        },
-        width: '300px',
-    });
-}
-
 const Jobs = ({ openController }) => {
     // Jobs list state & methods
     const [jobsList, setJobsList] = useState({
         jobs: [],
-        jobsPerPage: 5,
+        jobsPerPage: 3,
         pageNum: 1,
     });
 
-    const searchJobs = async () => {
+    const displayJobs = async (numPage = 1) => {
         const btnLoad = document.querySelector('#loadMore'),
             loader = document.querySelector('.job-loader');
-        const { company, department, salary, workDay, description } = selectValues;
-        const data = new FormData();
-        const filtersObj = {
-            idEmpresa: company.id,
-            idDepartamento: department.id,
-            salario: salary.id,
-            jornada: workDay.id,
-            descripcion: description,
-        }
 
-        if (!description) return emptySearch();
+        const formData = new FormData();
+        formData.append('estatus', 'Activo');
+        formData.append('filtros', JSON.stringify({ ...jobsFilter }));
+        formData.append('registrosPorPagina', jobsList.jobsPerPage);
+        formData.append('pagina', numPage);
 
-        data.append('estatus', 'Activo');
-        data.append('filtros', JSON.stringify(filtersObj));
-        data.append('registrosPorPagina', jobsList.jobsPerPage);
-        data.append('pagina', 1);
+        // Hide button and show loader
+        btnLoad.classList.remove('flex');
+        btnLoad.classList.add('hidden');
+        loader.classList.remove('hidden');
 
         try {
-            let res = await axios.post(`${apiUrl}vacantes/consultar/`, data);
-            const { vacantes: searchedJobs } = res.data;
+            const { data } = await axios.post(`${apiUrl}vacantes/consultar/`, formData);
+            let { vacantes: jobsRequested } = data;
 
-            if (!searchedJobs) return noResultJobs();
+            if (!jobsRequested) {
+                loader.classList.add('hidden');
+                return noResultJobs();
+            }
+
+            if (numPage > 1) {
+                let { jobs } = jobsList;
+
+                for (const job of jobsRequested)
+                    jobs = [...jobs, job];
+
+                jobsRequested = [...jobs];
+            }
+
+            if (numPage === 1)
+                setFirstJob(jobsRequested[0]);
 
             setJobsList({
                 ...jobsList,
-                jobs: searchedJobs,
-                pageNum: 1,
+                jobs: jobsRequested,
+                pageNum: numPage,
             });
-
-            btnLoad.classList.remove('hidden');
-            btnLoad.classList.add('flex');
         } catch (error) {
             console.warn(error);
         }
+
+        btnLoad.classList.remove('hidden');
+        btnLoad.classList.add('flex');
+        loader.classList.add('hidden');
+    }
+
+    const setFirstJob = (firstJob = null) => {
+        if (!firstJob) return;
+
+        // Set first job details
+        const fullLocation = firstJob.direccion.split(',');
+
+        setJobDetails({
+            id: firstJob.id,
+            titulo: firstJob.titulo,
+            idEmpresa: firstJob.idEmpresa,
+            empresa: firstJob.empresa,
+            direccion: fullLocation[fullLocation.length - 2],
+            salario: firstJob.salario,
+            jornada: firstJob.jornada,
+            descripcion: firstJob.descripcion,
+            fechaPublicacion: firstJob.fechaPublicacion,
+            preguntas: firstJob.preguntas,
+        });
+    }
+
+    const searchJobs = async () => {
+        const { description } = selectValues;
+        setJobsFilter({
+            descripcion: description,
+        });
+
+        // if (!jobsFilter.descripcion) return emptySearch();
+        setIsFiltering(true);
     }
 
     const filterJobs = async () => {
-        const btnLoad = document.querySelector('#loadMore'),
-            loader = document.querySelector('.job-loader');
         const { company, department, salary, workDay, description } = selectValues;
-        const data = new FormData();
-        const filtersObj = {
+        setJobsFilter({
             idEmpresa: company.id,
             idDepartamento: department.id,
-            salario: salary.id,
             jornada: workDay.id,
+            salario: salary.id,
             descripcion: description,
-        }
+        });
+    }
 
-        data.append('estatus', 'Activo');
-        data.append('filtros', JSON.stringify(filtersObj));
-        data.append('registrosPorPagina', jobsList.jobsPerPage);
-        data.append('pagina', 1);
+    const emptyFilters = async () => {
+        const btnFilter = document.querySelector('#filterBtn'),
+            btnEmptyFilter = document.querySelector('#emptyFilterBtn');
+        const emptyObj = {
+            id: '',
+            value: '',
+        };
 
-        try {
-            let res = await axios.post(`${apiUrl}vacantes/consultar/`, data);
-            const { vacantes: filteredJobs } = res.data;
+        setSelectValues({
+            company: emptyObj,
+            department: emptyObj,
+            workDay: emptyObj,
+            salary: emptyObj,
+            description: '',
+        });
 
-            if (!filteredJobs) return noResultJobs();
+        setJobsFilter({
+            idEmpresa: '',
+            idDepartamento: '',
+            jornada: '',
+            salario: '',
+            descripcion: '',
+        });
 
-            setJobsList({
-                ...jobsList,
-                jobs: filteredJobs,
-                pageNum: 1,
-            });
+        setIsFiltering(false);
 
-            btnLoad.classList.remove('hidden');
-            btnLoad.classList.add('flex');
-        } catch (error) {
-            console.warn(error);
-        }
+        btnFilter.classList.remove('filtered');
+        btnEmptyFilter.classList.add('hidden');
     }
 
     const nextPage = async () => {
-        const btnLoad = document.querySelector('#loadMore'),
-            loader = document.querySelector('.job-loader');
-        let { jobs, pageNum } = jobsList;
-        const { company, department, salary, workDay, description } = selectValues;
-        const data = new FormData();
-        const filtersObj = {
-            idEmpresa: company.id,
-            idDepartamento: department.id,
-            salario: salary.id,
-            jornada: workDay.id,
-            descripcion: description,
-        }
-
-        data.append('estatus', 'Activo');
-        data.append('filtros', JSON.stringify(filtersObj));
-        data.append('registrosPorPagina', jobsList.jobsPerPage);
-        data.append('pagina', ++pageNum);
-
-        try {
-            btnLoad.classList.remove('flex');
-            btnLoad.classList.add('hidden');
-            loader.classList.toggle('hidden');
-
-            let { data: res } = await axios.post(`${apiUrl}vacantes/consultar/`, data);
-            const { vacantes } = res;
-
-            if (!vacantes) {
-                loader.classList.add('hidden');
-                btnLoad.classList.remove('flex');
-                btnLoad.classList.add('hidden');
-
-                return Swal.fire({
-                    html: `<h3 class='text-xl font-medium'>
-                            Lo sentimos.
-                        </h3>
-                        <p class='text-base'>
-                            No hay más vacantes disponibles por el momento.
-                        </p>`,
-                    icon: 'info',
-                    confirmButtonText: 'Cerrar',
-                    buttonsStyling: false,
-                    customClass: {
-                        confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
-                    },
-                    width: '300px',
-                });
-            }
-
-            for (const job of vacantes)
-                jobs = [...jobs, job];
-
-            setJobsList({
-                ...jobsList,
-                jobs: jobs,
-                pageNum: pageNum,
-            });
-
-            btnLoad.classList.remove('hidden');
-            btnLoad.classList.add('flex');
-            loader.classList.toggle('hidden');
-        } catch (error) {
-            console.warn(error);
-        }
+        let { pageNum: newPage } = jobsList;
+        await displayJobs(++newPage);
     }
 
     // Job modal state & methods
@@ -245,6 +214,16 @@ const Jobs = ({ openController }) => {
         }
     }
 
+    // Filtering state
+    const [isFiltering, setIsFiltering] = useState(false);
+    const [jobsFilter, setJobsFilter] = useState({
+        idEmpresa: '',
+        idDepartamento: '',
+        salario: '',
+        jornada: '',
+        descripcion: '',
+    });
+
     // Selects state & methods
     const [selectValues, setSelectValues] = useState({
         company: {
@@ -267,51 +246,13 @@ const Jobs = ({ openController }) => {
     });
 
     useEffect(() => {
-        const getAllJobs = async () => {
-            const data = new FormData();
-            data.append('registrosPorPagina', jobsList.jobsPerPage);
-            data.append('estatus', 'Activo');
-
-            try {
-                // Get jobs list
-                let res = await axios.post(`${apiUrl}vacantes/consultar/`, data);
-                const { vacantes: jobs } = res.data;
-                const firstJob = jobs.length ? jobs[0] : null;
-
-                setJobsList({
-                    ...jobsList,
-                    jobs: jobs,
-                });
-
-                if (!firstJob) return;
-
-                // Set first job details
-                const fullLocation = firstJob.direccion.split(',');
-
-                setJobDetails({
-                    id: firstJob.id,
-                    titulo: firstJob.titulo,
-                    idEmpresa: firstJob.idEmpresa,
-                    empresa: firstJob.empresa,
-                    direccion: fullLocation[fullLocation.length - 2],
-                    salario: firstJob.salario,
-                    jornada: firstJob.jornada,
-                    descripcion: firstJob.descripcion,
-                    fechaPublicacion: firstJob.fechaPublicacion,
-                    preguntas: firstJob.preguntas,
-                });
-            } catch (error) {
-                console.warn(error);
-            }
-        }
-
-        getAllJobs();
-    }, []);
+        displayJobs();
+    }, [jobsFilter]);
 
     return (
         <>
-            <Searchbar searchJobs={searchJobs} selectValues={selectValues} setSelectValues={setSelectValues} />
-            <Filters filterJobs={filterJobs} selectValues={selectValues} setSelectValues={setSelectValues} />
+            <Searchbar selectValues={selectValues} setSelectValues={setSelectValues} setIsFiltering={setIsFiltering} />
+            <Filters filterJobs={filterJobs} emptyFilters={emptyFilters} isFiltering={isFiltering} setIsFiltering={setIsFiltering} selectValues={selectValues} setSelectValues={setSelectValues} />
 
             <section className='jobs max-w-screen-lg mx-auto flex justify-center md:justify-between gap-4 px-8 xl:px-0 mb-12'>
                 <JobsList jobs={jobsList.jobs} detailsOnClick={detailsOnClick} paginationController={nextPage} />
