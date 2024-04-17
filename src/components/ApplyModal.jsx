@@ -108,7 +108,7 @@ const validateFields = (fields = []) => {
                 confirmButtonText: 'Cerrar',
                 buttonsStyling: false,
                 customClass: {
-                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                    confirmButton: 'btn px-6 py-2 rounded-lg text-white font-medium bg-blue-950 hover:bg-blue-900 focus:bg-blue-900',
                 },
                 width: '300px',
             });
@@ -124,7 +124,7 @@ const validateFields = (fields = []) => {
                 confirmButtonText: 'Cerrar',
                 buttonsStyling: false,
                 customClass: {
-                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                    confirmButton: 'btn px-6 py-2 rounded-lg text-white font-medium bg-blue-950 hover:bg-blue-900 focus:bg-blue-900',
                 },
                 width: '300px',
             });
@@ -151,7 +151,7 @@ const validateAdditionalQuestions = () => {
                 confirmButtonText: 'Cerrar',
                 buttonsStyling: false,
                 customClass: {
-                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                    confirmButton: 'btn px-6 py-2 rounded-lg text-white font-medium bg-blue-950 hover:bg-blue-900 focus:bg-blue-900',
                 },
                 width: '300px',
             });
@@ -239,7 +239,7 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
                 confirmButtonText: 'Cerrar',
                 buttonsStyling: false,
                 customClass: {
-                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                    confirmButton: 'btn px-6 py-2 rounded-lg text-white font-medium bg-blue-950 hover:bg-blue-900 focus:bg-blue-900',
                 },
                 width: '300px',
             });
@@ -277,7 +277,7 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
                 confirmButtonText: 'Cerrar',
                 buttonsStyling: false,
                 customClass: {
-                    confirmButton: 'btn px-6 py-2 rounded-full text-white font-medium bg-blue-900 hover:bg-blue-950 focus:bg-blue-950',
+                    confirmButton: 'btn px-6 py-2 rounded-lg text-white font-medium bg-blue-950 hover:bg-blue-900 focus:bg-blue-900',
                 },
                 width: '300px',
             });
@@ -292,11 +292,11 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
         <section className={`apply flex items-center justify-center ${modal.visible ? 'show' : ''}`}>
             <div className='modal flex flex-col gap-4 w-full max-w-screen-md mx-auto'>
                 <span className='flex items-center justify-between'>
-                    <h5 className='text-2xl text-blue-900 font-semibold'>
+                    <h5 className='text-2xl text-blue-950 font-bold'>
                         Enviar aplicación
                     </h5>
 
-                    <button onClick={closeModal} className='text-xl ease-in-out duration-100 text-blue-900 focus:text-blue-950 hover:text-blue-950'>
+                    <button onClick={closeModal} className='text-xl ease-in-out duration-100 text-blue-950 focus:text-blue-900 hover:text-blue-900'>
                         <FaTimes />
                     </button>
                 </span>
@@ -308,35 +308,35 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
                     </h6>
 
                     <div className="input-icon">
-                        <FaGraduationCap className='icon text-blue-900' />
+                        <FaGraduationCap className='icon text-blue-950' />
                         <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.profTitle} type="text" name='profTitle' placeholder='Título profesional' />
                     </div>
 
                     <span className='flex flex-col md:flex-row gap-2'>
                         <div className="input-icon">
-                            <FaUser className='icon text-blue-900' />
+                            <FaUser className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.name} type="text" name='name' placeholder='Nombre' />
                         </div>
 
                         <div className="input-icon">
-                            <FaAddressCard className='icon text-blue-900' />
+                            <FaAddressCard className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.lastName} type="text" name='lastName' placeholder='Apellidos' />
                         </div>
                     </span>
 
                     <span className='flex flex-col md:flex-row gap-2'>
                         <div className="input-icon">
-                            <FaBirthdayCake className='icon text-blue-900' />
+                            <FaBirthdayCake className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.birthDate} type="date" name='birthDate' placeholder='Fecha de nacimiento' />
                         </div>
 
                         <div className="input-icon">
-                            <FaEnvelope className='icon text-blue-900' />
+                            <FaEnvelope className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.mail} type="email" name='mail' placeholder='Correo electrónico' />
                         </div>
 
                         <div className="input-icon">
-                            <FaPhoneAlt className='icon text-blue-900' />
+                            <FaPhoneAlt className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.phone} type="tel" name='phone' placeholder='Teléfono' />
                         </div>
                     </span>
@@ -347,13 +347,13 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
                     </h6>
 
                     <div className="input-icon">
-                        <FaWarehouse className='icon text-blue-900' />
+                        <FaWarehouse className='icon text-blue-950' />
                         <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.street} type="text" name='street' placeholder='Calle' />
                     </div>
 
                     <span className='flex flex-col md:flex-row gap-2'>
                         <div className="input-icon">
-                            <FaHashtag className='icon text-blue-900' />
+                            <FaHashtag className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.numInt} type="text" name='numInt' placeholder='Num. int.' />
                             <span>
                                 -
@@ -362,24 +362,24 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
                         </div>
 
                         <div className="input-icon">
-                            <FaBuilding className='icon text-blue-900' />
+                            <FaBuilding className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.neighbor} type="text" name='neighbor' placeholder='Colonia' />
                         </div>
                     </span>
 
                     <span className='flex flex-col md:flex-row gap-2'>
                         <div className="input-icon">
-                            <FaRegEnvelope className='icon text-blue-900' />
+                            <FaRegEnvelope className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.postCode} type="text" name='postCode' placeholder='Código postal' />
                         </div>
 
                         <div className="input-icon">
-                            <FaCity className='icon text-blue-900' />
+                            <FaCity className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.city} type="text" name='city' placeholder='Municipio' />
                         </div>
 
                         <div className="input-icon">
-                            <FaMapMarkedAlt className='icon text-blue-900' />
+                            <FaMapMarkedAlt className='icon text-blue-950' />
                             <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} value={candidate.state} type="text" name='state' placeholder='Estado' />
                         </div>
                     </span>
@@ -390,26 +390,26 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
                     </h6>
 
                     <div className="input-icon">
-                        <FaUpload className='icon text-blue-900' />
+                        <FaUpload className='icon text-blue-950' />
                         <input onChange={handleChangeFile} onFocus={handleFocus} onBlur={handleBlur} value={candidate.cvFile} type="file" name='cvFile' accept='.pdf' />
                     </div>
                 </article>
 
                 <article className='additional-info hidden flex flex-col items-center gap-2'>
                     {/* Additional info */}
-                    <h6 className='text-blue-950 text-lg font-medium'>
+                    <h6 className='text-blue-900 text-lg font-medium'>
                         Preguntas adicionales
                     </h6>
 
                     {
                         addQuestions.map(({ tipo, label, valores }, index) => {
                             return (<span key={index} className='question flex flex-col gap-1 w-full max-w-96'>
-                                <label className='text-blue-950 font-medium'>
+                                <label className='text-blue-900 font-medium'>
                                     {label}
                                 </label>
 
                                 <div className='input-icon'>
-                                    <FaQuestion className='icon text-blue-900' />
+                                    <FaQuestion className='icon text-blue-950' />
                                     {
                                         tipo === 'text' ?
                                             <input className='add-input' onFocus={handleFocus} onBlur={handleBlur} type='text' placeholder='Respuesta' /> :
@@ -432,12 +432,12 @@ const ApplyModal = ({ modal, closeController, candidate, handleChange, handleCha
 
                 <span className='flex gap-2 justify-end buttons'>
                     {/* <Button hasQuestions={modal.questions} /> */}
-                    <button onClick={nextPageModal} className={`btn-icon next ease-in-out duration-100 text-white bg-blue-900 hover:bg-blue-800 focus:bg-blue-800 ${modal.questions ? '' : 'hidden'}`}>
+                    <button onClick={nextPageModal} className={`btn-icon next ease-in-out duration-100 text-white bg-blue-950 hover:bg-blue-800 focus:bg-blue-800 ${modal.questions ? '' : 'hidden'}`}>
                         Siguiente
                         <FaAngleRight />
                     </button>
 
-                    <button onClick={sendCandidate} className={`btn-icon send ease-in-out duration-100 text-white bg-blue-950 hover:bg-blue-900 focus:bg-blue-900 ${!modal.questions ? '' : 'hidden'}`}>
+                    <button onClick={sendCandidate} className={`btn-icon send ease-in-out duration-100 text-white bg-blue-900 hover:bg-blue-950 focus:bg-blue-950 ${!modal.questions ? '' : 'hidden'}`}>
                         Enviar
                         <FaPaperPlane />
                     </button>

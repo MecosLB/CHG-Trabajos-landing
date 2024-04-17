@@ -32,13 +32,15 @@ const splideOptions = {
 
 const Header = () => {
     return (
-        <section className='header flex flex-col gap-16 max-w-screen-lg mx-auto px-8 lg:px-0 py-16'>
-            <h1 className='text-gray-800 text-center text-3xl md:text-5xl font-bold'>
-                Título de la bolsa de trabajo <br className='hidden md:block'/><span className='text-blue-900'>llamativo e incitante</span>.
-            </h1>
+        <section className='header flex flex-col gap-20 pb-32'>
+            <div className='banner'>
+                <h1 className='text-blue-950 text-center text-3xl md:text-5xl font-bold'>
+                    Únete a la<br /> Familia CHG
+                </h1>
+            </div>
 
-            <div className='text-center'>
-                <p className='mb-4 text-lg text-gray-500 font-medium'>
+            <div className='text-center max-w-screen-lg mx-auto px-8 lg:px-0'>
+                <p className='mb-4 uppercase font-bold text-gray-700 tracking-widest'>
                     Nuestras empresas
                 </p>
 

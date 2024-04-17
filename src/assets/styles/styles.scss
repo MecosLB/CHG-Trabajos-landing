@@ -13,7 +13,40 @@ $xxl: 1536px;
 $white: #fff;
 $black: #000;
 $red: #dc3545;
+$green: #00d7d7;
 $blue-950: rgb(23 37 84);
+
+// Fonts
+$metropolis-font-path: "../fonts/Metropolis";
+
+@font-face {
+    src: url($metropolis-font-path + "/Metropolis-ExtraBold.otf") format("otf");
+    font-family: "Metropolis";
+    font-weight: 800;
+}
+
+@font-face {
+    src: url($metropolis-font-path + "/Metropolis-Bold.otf") format("otf");
+    font-family: "Metropolis";
+    font-weight: 700;
+}
+
+@font-face {
+    src: url($metropolis-font-path + "/Metropolis-Medium.otf") format("otf");
+    font-family: "Metropolis";
+    font-weight: 500;
+}
+
+@font-face {
+    src: url($metropolis-font-path + "/Metropolis-Regular.otf") format("otf");
+    font-family: "Metropolis";
+    font-weight: 400;
+}
+
+* {
+    font-family: "Metropolis", sans-serif;
+    font-weight: 400;
+}
 
 // Utilities
 .logo {
@@ -106,6 +139,23 @@ $blue-950: rgb(23 37 84);
         picture {
             display: flex;
             max-width: 215px;
+        }
+    }
+
+    .banner {
+        padding: 4rem 0;
+        background-image: url(../img/banner-bg.webp);
+        background-size: cover;
+        background-position-y: 0%;
+
+        @media(min-width:$md) {
+            padding: 8rem 0;
+            background-position-y: 10%;
+        }
+
+        @media(min-width:$lg) {
+            padding: 8rem 0;
+            background-position-y: 30%;
         }
     }
 }
@@ -453,7 +503,6 @@ $blue-950: rgb(23 37 84);
 
     .btn-icon {
         padding: 0.5rem 1rem;
-        border-radius: 200px;
     }
 }
 
@@ -482,11 +531,38 @@ $blue-950: rgb(23 37 84);
 
 // Footer
 .footer {
+    *:not(h5) {
+        font-size: 12px;
+    }
+
+    svg {
+        color: $green;
+    }
+
     ul.info {
         li {
+            font-size: 13px;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+    }
+
+    .left-col {
+
+        @media (min-width:$lg) {
+            width: 100%;
+        }
+
+        hr {
+            width: 100%;
+            border: 1px solid rgba($white, 0.25);
+        }
+    }
+
+    .contact {
+        @media (min-width:$md) {
+            max-width: 250px;
         }
     }
 }
